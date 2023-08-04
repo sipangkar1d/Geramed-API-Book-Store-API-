@@ -45,7 +45,9 @@ public class SecurityConfiguration {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
                 .antMatchers("/api/v1/auth/**").permitAll()
-//                .antMatchers(HttpMethod.GET,"/api/v1/products").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/v1/books").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/v1/books/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/v1/stores/**").permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
