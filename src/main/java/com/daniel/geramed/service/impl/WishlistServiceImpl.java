@@ -43,7 +43,7 @@ public class WishlistServiceImpl implements WishlistService {
 
     @Override
     public List<WishlistResponse> findAll(String email) {
-        List<WishList> wishLists = wishlistRepository.findAll();
+        List<WishList> wishLists = wishlistRepository.findAllWishlist();
         List<WishlistResponse> response = new ArrayList<>();
         for (WishList wishList : wishLists) {
             if (!wishList.getCustomer().getEmail().equals(email)) continue;
@@ -57,7 +57,7 @@ public class WishlistServiceImpl implements WishlistService {
 
     @Override
     public void delete(String id) {
-        WishList wishList = wishlistRepository.findById(id)
+        WishList wishList = wishlistRepository.findWishListById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Wishlist Not Found"));
         wishlistRepository.delete(wishList);
     }

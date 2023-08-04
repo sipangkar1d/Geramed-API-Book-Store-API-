@@ -31,7 +31,7 @@ public class StoreController {
         Store storeRequest = storeService.findById(request.getId());
         UserCredential userCredential = userCredentialService.getByEmail(authentication.getName());
 
-        if (storeRequest.getEmail().equals(userCredential.getEmail())){
+        if (storeRequest.getEmail().equals(userCredential.getEmail())) {
             Store store = storeService.update(request);
 
             StoreResponse response = StoreResponse.builder()
@@ -58,16 +58,16 @@ public class StoreController {
     public ResponseEntity<?> getAllStore() {
         List<Store> stores = storeService.findAll();
 
-        List<StoreResponse> responses = stores.stream().map(store -> {
-            return StoreResponse.builder()
-                    .id(store.getId())
-                    .name(store.getName())
-                    .phone(store.getPhone())
-                    .email(store.getEmail())
-                    .address(store.getAddress())
-                    .isActive(store.isActive())
-                    .build();
-        }).collect(Collectors.toList());
+        List<StoreResponse> responses = stores.stream().map(store ->
+                StoreResponse.builder()
+                        .id(store.getId())
+                        .name(store.getName())
+                        .phone(store.getPhone())
+                        .email(store.getEmail())
+                        .address(store.getAddress())
+                        .isActive(store.isActive())
+                        .build()
+        ).collect(Collectors.toList());
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonResponse.builder()
@@ -111,7 +111,7 @@ public class StoreController {
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping(path = "/{id}")
-    public ResponseEntity<?> activateStore(@PathVariable String id){
+    public ResponseEntity<?> activateStore(@PathVariable String id) {
         storeService.activate(id);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonResponse.builder()

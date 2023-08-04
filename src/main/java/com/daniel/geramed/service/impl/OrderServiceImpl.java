@@ -83,7 +83,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(rollbackOn = Exception.class)
     public OrderResponse findById(String id) {
-        Order order = orderRepository.findById(id)
+        Order order = orderRepository.findOrderById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order Not Found"));
         return getOrderResponse(order);
     }
@@ -129,6 +129,6 @@ public class OrderServiceImpl implements OrderService {
         Date currentDate = new Date();
         String formattedDate = new SimpleDateFormat("yyyyMMdd").format(currentDate);
         Integer orderByDay = getOrderDay() + 1;
-        return String.format("%s%s%04d", prefix, formattedDate, orderByDay);
+        return String.format("%s-%s-%04d", prefix, formattedDate, orderByDay);
     }
 }

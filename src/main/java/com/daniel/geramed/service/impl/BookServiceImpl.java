@@ -130,7 +130,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book findById(String id) {
-        return bookRepository.findById(id)
+        return bookRepository.findBookById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not Found"));
 
     }
@@ -171,7 +171,7 @@ public class BookServiceImpl implements BookService {
             return query.where(predicates.toArray(new Predicate[]{})).getRestriction();
         };
         Sort sort = Sort.by(Sort.Direction.DESC, "views");
-        List<Book> books = bookRepository.findAll(specification,sort);
+        List<Book> books = bookRepository.findAll(specification, sort);
         List<BookResponse> responses = new ArrayList<>();
         for (Book book : books) {
             Optional<BookPrice> bookPrice = book.getBookPrices().stream().filter(BookPrice::getIsActive).findFirst();

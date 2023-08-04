@@ -13,6 +13,6 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 
     @Override
     public OrderDetail create(OrderDetail orderDetail) {
-        return orderDetailRepository.save(orderDetail);
+        return orderDetailRepository.saveAndFlush(orderDetail);
     }
 }

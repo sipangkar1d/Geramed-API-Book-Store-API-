@@ -22,7 +22,7 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public Store findById(String id) {
-        return storeRepository.findById(id)
+        return storeRepository.findStoreById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Store not Found"));
     }
 
@@ -38,19 +38,17 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public void delete(String id) {
         Store store = findById(id);
-        store.setActive(false);
-        storeRepository.save(store);
+        storeRepository.deactivateStore(id);
     }
 
     @Override
     public void activate(String id) {
         Store store = findById(id);
-        store.setActive(true);
-        storeRepository.save(store);
+        storeRepository.activateStore(id);
     }
 
     @Override
     public List<Store> findAll() {
-        return storeRepository.findAll();
+        return storeRepository.findAllStores();
     }
 }

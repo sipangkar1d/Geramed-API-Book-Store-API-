@@ -20,7 +20,7 @@ public class BookPriceServiceImpl implements BookPriceService {
 
     @Override
     public BookPrice getById(String id) {
-        return bookPriceRepository.findById(id)
+        return bookPriceRepository.findBookPriceById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book Price Not Found"));
     }
 
