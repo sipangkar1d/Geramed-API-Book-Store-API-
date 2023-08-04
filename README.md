@@ -52,7 +52,7 @@ geramed.password=admin123
 - Create Book (Store)
 - Create Bulk Book (Store)
 - Update Book (Store)
-- Delete Book (Store)
+- Delete Book (Store) => Soft delete
 - Find All Book (Semua) 
 - Find Book by Id (Semua)
 
@@ -64,6 +64,13 @@ geramed.password=admin123
 - Create Order (Customer)
 - Get Order By Id (Admin)
 - Get All Order (Admin)
+
+### STORE SERVICE
+- Update (Store)
+- Get All (Admin)
+- Delete Store (Admin) => Soft Delete
+- Activate (Admin)
+- Get Store By Id (Semua)
 
 ### Wishlist
 - Create (Customer)
