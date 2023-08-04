@@ -102,6 +102,7 @@ public class AuthServiceImpl implements AuthService {
             storeService.create(Store.builder()
                     .email(userCredential.getEmail())
                     .name(userCredential.getEmail().substring(0, userCredential.getEmail().indexOf("@")))
+                    .isActive(true)
                     .userCredential(userCredential)
                     .build());
 

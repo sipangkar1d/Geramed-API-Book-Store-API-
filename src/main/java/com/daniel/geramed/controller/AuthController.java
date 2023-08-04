@@ -21,51 +21,41 @@ public class AuthController {
 
     @PostMapping(path = "/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
-        LoginResponse response = authService.login(request);
-
-        CommonResponse<?> commonResponse = CommonResponse.<LoginResponse>builder()
-                .statusCode(HttpStatus.OK.value())
-                .message("Success Login")
-                .data(response)
-                .build();
-
-        return ResponseEntity.status(commonResponse.getStatusCode())
-                .body(commonResponse);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message("Success Login")
+                        .data(authService.login(request))
+                        .build());
     }
 
     @PostMapping(path = "/register-admin")
     public ResponseEntity<?> registerAdmin(@RequestBody AuthRequest request) {
-        RegisterResponse response = authService.registerAdmin(request);
-
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.CREATED.value())
                         .message("Success Register Admin")
-                        .data(response)
+                        .data(authService.registerAdmin(request))
                         .build());
     }
 
     @PostMapping(path = "/register-store")
     public ResponseEntity<?> registerStore(@RequestBody AuthRequest request) {
-        RegisterResponse response = authService.registerStore(request);
-
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.CREATED.value())
                         .message("Success Register Store")
-                        .data(response)
+                        .data(authService.registerStore(request))
                         .build());
     }
 
     @PostMapping(path = "/register-customer")
     public ResponseEntity<?> registerCustomer(@RequestBody AuthRequest request) {
-        RegisterResponse response = authService.registerCustomer(request);
-
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(CommonResponse.builder()
                         .statusCode(HttpStatus.CREATED.value())
                         .message("Success Register Customer")
-                        .data(response)
+                        .data(authService.registerCustomer(request))
                         .build());
     }
 }
