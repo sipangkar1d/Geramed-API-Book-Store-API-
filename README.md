@@ -40,8 +40,9 @@ geramed.password=admin123
 ![geramed_erd.jpg](geramed_erd.jpg)
 
 ## FITUR
-### AUTHENTICATION SERVICE
 > NAMA_FITUR_(YANG_MEMILIKI_AKSES)
+
+### AUTHENTICATION SERVICE
 - Login (Semua)
 - Register Admin (Admin)
 - Register Store (Admin)
