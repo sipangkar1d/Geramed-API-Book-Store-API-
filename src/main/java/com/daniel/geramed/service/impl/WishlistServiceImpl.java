@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,18 +42,23 @@ public class WishlistServiceImpl implements WishlistService {
     }
 
     @Override
-    public List<WishlistResponse> findAll() {
-        return wishlistRepository.findAll().stream().map(wishList ->
-                WishlistResponse.builder()
-                        .id(wishList.getId())
-                        .book(wishList.getBook().getTitle())
-                        .build()
-        ).collect(Collectors.toList());
+    public List<WishlistResponse> findAll(String email) {
+        List<WishList> wishLists = wishlistRepository.findAll();
+        List<WishlistResponse> response = new ArrayList<>();
+        for (WishList wishList : wishLists) {
+            if (!wishList.getCustomer().getEmail().equals(email)) continue;
+            response.add(WishlistResponse.builder()
+                    .id(wishList.getId())
+                    .book(wishList.getBook().getTitle())
+                    .build());
+        }
+        return response;
     }
 
     @Override
     public void delete(String id) {
-        WishList wishList = wishlistRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Wishlist Not Found"));
+        WishList wishList = wishlistRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Wishlist Not Found"));
         wishlistRepository.delete(wishList);
     }
 }

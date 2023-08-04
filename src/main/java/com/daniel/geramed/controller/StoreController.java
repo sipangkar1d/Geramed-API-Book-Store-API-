@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,7 @@ public class StoreController {
     private final StoreService storeService;
     private final UserCredentialService userCredentialService;
 
-
+    @PreAuthorize("hasAnyRole('STORE')")
     @PutMapping()
     public ResponseEntity<?> updateStore(@RequestBody StoreRequest request, Authentication authentication) {
         Store storeRequest = storeService.findById(request.getId());
@@ -52,6 +53,7 @@ public class StoreController {
         throw new AccessDeniedException("Access Denied, Can only update yours");
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping()
     public ResponseEntity<?> getAllStore() {
         List<Store> stores = storeService.findAll();
@@ -75,6 +77,7 @@ public class StoreController {
                         .build());
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<?> deleteStore(@PathVariable(name = "id") String id) {
         storeService.delete(id);
@@ -106,6 +109,7 @@ public class StoreController {
                         .build());
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping(path = "/{id}")
     public ResponseEntity<?> activateStore(@PathVariable String id){
         storeService.activate(id);

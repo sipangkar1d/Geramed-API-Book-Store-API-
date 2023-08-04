@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface WishlistService {
     WishlistResponse create(WishlistRequest wishList);
-    List<WishlistResponse> findAll();
+    List<WishlistResponse> findAll(String email);
     void delete(String id);
 
 }

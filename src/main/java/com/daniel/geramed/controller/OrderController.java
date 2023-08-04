@@ -6,6 +6,7 @@ import com.daniel.geramed.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
     private final OrderService orderService;
 
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
     @PostMapping()
     public ResponseEntity<?> create(@RequestBody OrderRequest request){
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -24,6 +26,7 @@ public class OrderController {
                         .build());
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping(path = "/{id}")
     public ResponseEntity<?> findById(@PathVariable String id){
         return ResponseEntity.status(HttpStatus.OK)
@@ -34,6 +37,7 @@ public class OrderController {
                         .build());
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping()
     public ResponseEntity<?> findAll(){
         return ResponseEntity.status(HttpStatus.OK)

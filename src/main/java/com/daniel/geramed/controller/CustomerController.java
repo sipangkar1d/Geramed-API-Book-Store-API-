@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ public class CustomerController {
     private final CustomerService customerService;
     private final UserCredentialService userCredentialService;
 
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
     @PutMapping()
     public ResponseEntity<?> update(@RequestBody CustomerRequest request, Authentication authentication) {
         Customer customer = customerService.findById(request.getId());
@@ -47,6 +49,7 @@ public class CustomerController {
         throw new AccessDeniedException("Access Denied, Can only update yours");
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping(path = "/{id}")
     public ResponseEntity<?> findById(@PathVariable String id) {
         Customer customer = customerService.findById(id);

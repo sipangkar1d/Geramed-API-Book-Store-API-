@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,7 @@ public class BookController {
     private final UserCredentialService userCredentialService;
     private final StoreService storeService;
 
-
+    @PreAuthorize("hasAnyRole('STORE')")
     @PostMapping()
     public ResponseEntity<?> create(@RequestBody BookRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -35,6 +36,7 @@ public class BookController {
                         .build());
     }
 
+    @PreAuthorize("hasAnyRole('STORE')")
     @PostMapping(path = "/create-bulk")
     public ResponseEntity<?> createBulk(@RequestBody List<BookRequest> request) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -45,11 +47,12 @@ public class BookController {
                         .build());
     }
 
+    @PreAuthorize("hasAnyRole('STORE')")
     @PutMapping()
     public ResponseEntity<?> update(@RequestBody BookRequest request, Authentication authentication) {
         Store store = storeService.findById(request.getStoreId());
         UserCredential userCredential = userCredentialService.getByEmail(authentication.getName());
-        if (store.getEmail().equals(userCredential.getEmail())){
+        if (store.getEmail().equals(userCredential.getEmail())) {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(CommonResponse.builder()
                             .statusCode(HttpStatus.OK.value())
@@ -69,6 +72,7 @@ public class BookController {
                         .data(bookService.findBookById(id))
                         .build());
     }
+
     @GetMapping()
     public ResponseEntity<?> findBookByTitleAuthorIsbn(
             @RequestParam(name = "title", required = false) String name,
@@ -83,6 +87,7 @@ public class BookController {
                         .build());
     }
 
+    @PreAuthorize("hasAnyRole('STORE')")
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<?> deleteBook(@PathVariable String id) {
         bookService.delete(id);
@@ -92,5 +97,4 @@ public class BookController {
                         .message("Success Delete Books")
                         .build());
     }
-
 }
