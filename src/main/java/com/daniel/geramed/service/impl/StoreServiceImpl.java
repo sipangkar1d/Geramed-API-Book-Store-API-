@@ -1,6 +1,7 @@
 package com.daniel.geramed.service.impl;
 
 import com.daniel.geramed.entity.Store;
+import com.daniel.geramed.model.request.StoreRequest;
 import com.daniel.geramed.repository.StoreRepository;
 import com.daniel.geramed.service.StoreService;
 import lombok.RequiredArgsConstructor;
@@ -26,14 +27,26 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public Store update(Store store) {
+    public Store update(StoreRequest request) {
+        Store store = findById(request.getId());
+        store.setName(request.getName());
+        store.setPhone(request.getPhone());
+        store.setAddress(request.getAddress());
         return storeRepository.save(store);
     }
 
     @Override
-    public void delete(Store request) {
-        Store store = findById(request.getId());
-        storeRepository.delete(store);
+    public void delete(String id) {
+        Store store = findById(id);
+        store.setActive(false);
+        storeRepository.save(store);
+    }
+
+    @Override
+    public void activate(String id) {
+        Store store = findById(id);
+        store.setActive(true);
+        storeRepository.save(store);
     }
 
     @Override

@@ -4,13 +4,17 @@ import com.daniel.geramed.entity.Book;
 import com.daniel.geramed.entity.BookPrice;
 import com.daniel.geramed.entity.Store;
 import com.daniel.geramed.model.request.BookRequest;
+import com.daniel.geramed.model.response.BookResponse;
 import com.daniel.geramed.repository.BookRepository;
 import com.daniel.geramed.service.BookPriceService;
 import com.daniel.geramed.service.BookService;
 import com.daniel.geramed.service.StoreService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.criteria.Predicate;
 import javax.transaction.Transactional;
@@ -28,7 +32,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public Book create(BookRequest request) {
+    public BookResponse create(BookRequest request) {
         Book book = bookRepository.saveAndFlush(
                 Book.builder()
                         .title(request.getTitle())
@@ -54,16 +58,25 @@ public class BookServiceImpl implements BookService {
 
         book.setBookPrices(List.of(bookPrice));
 
-        return book;
+        return BookResponse.builder()
+                .id(book.getId())
+                .title(book.getTitle())
+                .isbn(book.getIsbn())
+                .author(book.getAuthor())
+                .publisher(book.getPublisher())
+                .price(bookPrice.getPrice())
+                .stock(bookPrice.getStock())
+                .build();
     }
 
     @Override
-    public List<Book> createBulk(List<BookRequest> requests) {
+    public List<BookResponse> createBulk(List<BookRequest> requests) {
         return requests.stream().map(this::create).collect(Collectors.toList());
     }
 
-    @Override @Transactional(rollbackOn = Exception.class)
-    public Book update(BookRequest request) {
+    @Override
+    @Transactional(rollbackOn = Exception.class)
+    public BookResponse update(BookRequest request) {
         Book book = findById(request.getId());
         book.setTitle(request.getTitle());
         book.setIsbn(request.getIsbn());
@@ -77,34 +90,73 @@ public class BookServiceImpl implements BookService {
         if (bookPrice.isPresent()) {
             if (bookPrice.get().getPrice().equals(request.getPrice())) {
                 bookPrice.get().setStock(request.getStock());
-                return book;
+                bookPriceService.update(bookPrice.get());
+                return BookResponse.builder()
+                        .id(book.getId())
+                        .title(book.getTitle())
+                        .isbn(book.getIsbn())
+                        .author(book.getAuthor())
+                        .publisher(book.getPublisher())
+                        .price(request.getPrice())
+                        .stock(request.getStock())
+                        .build();
             }
             bookPrice.get().setIsActive(false);
         }
 
-        BookPrice newBookPrice = BookPrice.builder()
+        BookPrice newBookPrice = bookPriceService.create(BookPrice.builder()
                 .price(request.getPrice())
                 .stock(request.getStock())
                 .book(book)
                 .store(store)
                 .isActive(true)
-                .build();
+                .build());
 
         List<BookPrice> bookPrices = book.getBookPrices();
         bookPrices.add(newBookPrice);
         book.setBookPrices(bookPrices);
+        bookRepository.save(book);
 
-        return book;
+        return BookResponse.builder()
+                .id(book.getId())
+                .title(book.getTitle())
+                .isbn(book.getIsbn())
+                .author(book.getAuthor())
+                .publisher(book.getPublisher())
+                .price(request.getPrice())
+                .stock(request.getStock())
+                .build();
     }
 
     @Override
     public Book findById(String id) {
         return bookRepository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not Found"));
+
     }
 
     @Override
-    public List<Book> findBookByTitleAuthorIsbn(String title, String author, String isbn) {
+    public BookResponse findBookById(String id) {
+        Book book = findById(id);
+        BookPrice bookPrice = book.getBookPrices().stream().filter(BookPrice::getIsActive).findFirst()
+                .orElse(BookPrice.builder().price(null).stock(null).build());
+
+        book.setViews(book.getViews() + 1);
+        bookRepository.save(book);
+
+        return BookResponse.builder()
+                .id(book.getId())
+                .title(book.getTitle())
+                .isbn(book.getIsbn())
+                .author(book.getAuthor())
+                .publisher(book.getPublisher())
+                .price(bookPrice.getPrice())
+                .stock(bookPrice.getStock())
+                .build();
+    }
+
+    @Override
+    public List<BookResponse> findBookByTitleAuthorIsbn(String title, String author, String isbn) {
         Specification<Book> specification = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (title != null) {
@@ -118,13 +170,29 @@ public class BookServiceImpl implements BookService {
             }
             return query.where(predicates.toArray(new Predicate[]{})).getRestriction();
         };
-
-        return bookRepository.findAll(specification);
+        Sort sort = Sort.by(Sort.Direction.DESC, "views");
+        List<Book> books = bookRepository.findAll(specification,sort);
+        List<BookResponse> responses = new ArrayList<>();
+        for (Book book : books) {
+            Optional<BookPrice> bookPrice = book.getBookPrices().stream().filter(BookPrice::getIsActive).findFirst();
+            if (bookPrice.isEmpty() || !book.isActive()) continue;
+            responses.add(BookResponse.builder()
+                    .id(book.getId())
+                    .title(book.getTitle())
+                    .isbn(book.getIsbn())
+                    .author(book.getAuthor())
+                    .publisher(book.getPublisher())
+                    .price(bookPrice.get().getPrice())
+                    .stock(bookPrice.get().getStock())
+                    .build());
+        }
+        return responses;
     }
 
     @Override
     public void delete(String id) {
         Book book = findById(id);
-        bookRepository.delete(book);
+        book.setActive(false);
+        bookRepository.save(book);
     }
 }

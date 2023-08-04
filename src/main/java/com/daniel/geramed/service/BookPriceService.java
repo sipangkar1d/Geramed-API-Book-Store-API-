@@ -6,4 +6,6 @@ public interface BookPriceService {
     BookPrice create(BookPrice bookPrice);
     BookPrice getById(String id);
 
+    BookPrice update(BookPrice bookPrice);
+
 }

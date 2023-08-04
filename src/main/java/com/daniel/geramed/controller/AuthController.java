@@ -2,12 +2,11 @@ package com.daniel.geramed.controller;
 
 import com.daniel.geramed.model.request.AuthRequest;
 import com.daniel.geramed.model.response.CommonResponse;
-import com.daniel.geramed.model.response.LoginResponse;
-import com.daniel.geramed.model.response.RegisterResponse;
 import com.daniel.geramed.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +27,7 @@ public class AuthController {
                         .data(authService.login(request))
                         .build());
     }
-
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping(path = "/register-admin")
     public ResponseEntity<?> registerAdmin(@RequestBody AuthRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -38,7 +37,7 @@ public class AuthController {
                         .data(authService.registerAdmin(request))
                         .build());
     }
-
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping(path = "/register-store")
     public ResponseEntity<?> registerStore(@RequestBody AuthRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)

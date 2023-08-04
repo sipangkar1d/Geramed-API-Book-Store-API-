@@ -74,10 +74,43 @@ public class OrderServiceImpl implements OrderService {
 
         return OrderResponse.builder()
                 .invoice(order.getInvoice())
-                .orderDate(order.getOrderDate())
+                .orderDate(String.valueOf(order.getOrderDate()))
                 .orderDetails(orderDetailResponses)
                 .grandTotal(grandTotal)
                 .build();
+    }
+
+    @Override
+    @Transactional(rollbackOn = Exception.class)
+    public OrderResponse findById(String id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order Not Found"));
+        return getOrderResponse(order);
+    }
+
+    private OrderResponse getOrderResponse(Order order) {
+        List<OrderDetailResponse> orderDetailResponses = order.getOrderDetails().stream().map(orderDetail ->
+                OrderDetailResponse.builder()
+                        .title(orderDetail.getBookPrice().getBook().getTitle())
+                        .store(orderDetail.getBookPrice().getStore().getName())
+                        .quantity(orderDetail.getQuantity())
+                        .price(orderDetail.getBookPrice().getPrice())
+                        .subTotal(orderDetail.getQuantity() * orderDetail.getBookPrice().getPrice())
+                        .build()
+        ).collect(Collectors.toList());
+        long grandTotal = orderDetailResponses.stream().mapToLong(OrderDetailResponse::getSubTotal).sum();
+        return OrderResponse.builder()
+                .invoice(order.getInvoice())
+                .orderDate(String.valueOf(order.getOrderDate()))
+                .orderDetails(orderDetailResponses)
+                .grandTotal(grandTotal)
+                .build();
+    }
+
+    @Override
+    @Transactional(rollbackOn = Exception.class)
+    public List<OrderResponse> findAll() {
+        return orderRepository.findAll().stream().map(this::getOrderResponse).collect(Collectors.toList());
     }
 
     private Integer getOrderDay() {
@@ -95,7 +128,7 @@ public class OrderServiceImpl implements OrderService {
         String prefix = "GRMD";
         Date currentDate = new Date();
         String formattedDate = new SimpleDateFormat("yyyyMMdd").format(currentDate);
-        Integer orderByDay = getOrderDay();
+        Integer orderByDay = getOrderDay() + 1;
         return String.format("%s%s%04d", prefix, formattedDate, orderByDay);
     }
 }

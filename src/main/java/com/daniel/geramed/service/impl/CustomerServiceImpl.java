@@ -1,6 +1,7 @@
 package com.daniel.geramed.service.impl;
 
 import com.daniel.geramed.entity.Customer;
+import com.daniel.geramed.model.request.CustomerRequest;
 import com.daniel.geramed.repository.CustomerRepository;
 import com.daniel.geramed.service.CustomerService;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,11 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer update(Customer customer) {
-        findById(customer.getId());
+    public Customer update(CustomerRequest request) {
+        Customer customer = findById(request.getId());
+        customer.setName(request.getName());
+        customer.setPhone(request.getPhone());
+        customer.setAddress(request.getAddress());
         return customerRepository.save(customer);
     }
 
@@ -29,9 +33,5 @@ public class CustomerServiceImpl implements CustomerService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer Not Found"));
     }
 
-    @Override
-    public void delete(String id) {
-        Customer customer= findById(id);
-        customerRepository.delete(customer);
-    }
+
 }

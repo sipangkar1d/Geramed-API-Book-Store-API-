@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface AdminService {
     Admin create(Admin admin);
     Admin findById(String id);
+    Optional<Admin> findByEmail(String email);
 }

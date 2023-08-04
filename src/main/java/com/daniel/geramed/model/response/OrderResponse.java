@@ -2,7 +2,10 @@ package com.daniel.geramed.model.response;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +13,7 @@ import java.util.List;
 @Getter
 public class OrderResponse {
     private String invoice;
-    private Date orderDate;
+    private String orderDate;
     private List<OrderDetailResponse> orderDetails;
     private Long grandTotal;
 

@@ -23,4 +23,9 @@ public class BookPriceServiceImpl implements BookPriceService {
         return bookPriceRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Book Price Not Found"));
     }
+
+    @Override
+    public BookPrice update(BookPrice bookPrice) {
+        return bookPriceRepository.save(bookPrice);
+    }
 }

@@ -1,13 +1,17 @@
 package com.daniel.geramed.controller;
 
 import com.daniel.geramed.entity.Store;
+import com.daniel.geramed.entity.UserCredential;
 import com.daniel.geramed.model.request.StoreRequest;
 import com.daniel.geramed.model.response.CommonResponse;
 import com.daniel.geramed.model.response.StoreResponse;
 import com.daniel.geramed.service.StoreService;
+import com.daniel.geramed.service.UserCredentialService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,26 +22,34 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/api/v1/stores")
 public class StoreController {
     private final StoreService storeService;
+    private final UserCredentialService userCredentialService;
+
 
     @PutMapping()
-    public ResponseEntity<?> updateStore(@RequestBody StoreRequest request) {
-        Store store = storeService.update(request);
+    public ResponseEntity<?> updateStore(@RequestBody StoreRequest request, Authentication authentication) {
+        Store storeRequest = storeService.findById(request.getId());
+        UserCredential userCredential = userCredentialService.getByEmail(authentication.getName());
 
-        StoreResponse response = StoreResponse.builder()
-                .id(store.getId())
-                .name(store.getName())
-                .phone(store.getPhone())
-                .email(store.getEmail())
-                .address(store.getAddress())
-                .isActive(store.isActive())
-                .build();
+        if (storeRequest.getEmail().equals(userCredential.getEmail())){
+            Store store = storeService.update(request);
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(CommonResponse.builder()
-                        .statusCode(HttpStatus.OK.value())
-                        .message("Success Update Store")
-                        .data(response)
-                        .build());
+            StoreResponse response = StoreResponse.builder()
+                    .id(store.getId())
+                    .name(store.getName())
+                    .phone(store.getPhone())
+                    .email(store.getEmail())
+                    .address(store.getAddress())
+                    .isActive(store.isActive())
+                    .build();
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(CommonResponse.builder()
+                            .statusCode(HttpStatus.OK.value())
+                            .message("Success Update Store")
+                            .data(response)
+                            .build());
+        }
+        throw new AccessDeniedException("Access Denied, Can only update yours");
     }
 
     @GetMapping()

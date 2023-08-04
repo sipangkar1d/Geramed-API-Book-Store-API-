@@ -1,10 +1,13 @@
 package com.daniel.geramed.service;
 
-import com.daniel.geramed.entity.WishList;
+import com.daniel.geramed.model.request.WishlistRequest;
+import com.daniel.geramed.model.response.WishlistResponse;
+
+import java.util.List;
 
 public interface WishlistService {
-    WishList create(WishList wishList);
-    WishList findById(String id);
+    WishlistResponse create(WishlistRequest wishList);
+    List<WishlistResponse> findAll();
     void delete(String id);
 
 }
