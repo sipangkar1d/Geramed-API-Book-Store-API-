@@ -4,8 +4,6 @@ import com.daniel.geramed.model.request.AuthRequest;
 import com.daniel.geramed.model.response.LoginResponse;
 import com.daniel.geramed.model.response.RegisterResponse;
 
-import javax.transaction.Transactional;
-
 public interface AuthService {
     RegisterResponse registerCustomer(AuthRequest request);
 

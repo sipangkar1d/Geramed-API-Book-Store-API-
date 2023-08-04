@@ -44,7 +44,7 @@ public class SecurityConfiguration {
                 .exceptionHandling().accessDeniedHandler(accessDenied).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-                .antMatchers("/api/v1**").permitAll()
+                .antMatchers("/api/v1/auth/**").permitAll()
 //                .antMatchers(HttpMethod.GET,"/api/v1/products").permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
