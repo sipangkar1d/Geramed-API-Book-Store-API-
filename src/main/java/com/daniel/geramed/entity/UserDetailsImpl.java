@@ -12,9 +12,9 @@ import java.util.Collection;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class UserDetailsImpl implements UserDetails {
-
     private String email;
     private String password;
+    private Boolean isNonLocked;
     private Collection<? extends GrantedAuthority> authorities;
 
     @Override
@@ -39,7 +39,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return isNonLocked;
     }
 
     @Override

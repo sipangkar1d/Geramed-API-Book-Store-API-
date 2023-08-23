@@ -21,4 +21,18 @@ public class UserCredentialServiceImpl implements UserCredentialService {
     public UserCredential create(UserCredential userCredential) {
         return userCredentialRepository.saveAndFlush(userCredential);
     }
+
+    @Override
+    public UserCredential activate(String email) {
+        UserCredential userCredential = getByEmail(email);
+        userCredential.setIsActive(true);
+        return userCredentialRepository.save(userCredential);
+    }
+
+    @Override
+    public UserCredential deactivate(String email) {
+        UserCredential userCredential = getByEmail(email);
+        userCredential.setIsActive(false);
+        return userCredentialRepository.save(userCredential);
+    }
 }

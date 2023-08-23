@@ -45,6 +45,7 @@ public class AuthServiceImpl implements AuthService {
                     .email(request.getEmail())
                     .password(bCryptUtils.hashPassword(request.getPassword()))
                     .roles(List.of(role))
+                    .isActive(true)
                     .build();
             userCredentialRepository.saveAndFlush(userCredential);
 
@@ -70,6 +71,7 @@ public class AuthServiceImpl implements AuthService {
                     .email(request.getEmail())
                     .password(bCryptUtils.hashPassword(request.getPassword()))
                     .roles(List.of(role))
+                    .isActive(true)
                     .build();
             userCredentialRepository.saveAndFlush(userCredential);
 
@@ -96,13 +98,13 @@ public class AuthServiceImpl implements AuthService {
                     .email(request.getEmail())
                     .password(bCryptUtils.hashPassword(request.getPassword()))
                     .roles(List.of(role))
+                    .isActive(true)
                     .build();
             userCredentialRepository.saveAndFlush(userCredential);
 
             storeService.create(Store.builder()
                     .email(userCredential.getEmail())
                     .name(userCredential.getEmail().substring(0, userCredential.getEmail().indexOf("@")))
-                    .isActive(true)
                     .userCredential(userCredential)
                     .build());
 

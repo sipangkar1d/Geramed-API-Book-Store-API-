@@ -36,6 +36,7 @@ public class AppInit implements CommandLineRunner {
     public void run(String... args) throws Exception {
         Optional<Admin> admin = adminService.findByEmail(email);
         if (admin.isEmpty()) {
+            log.info("Creating first admin.");
             Role role = roleService.getOrSave(ERole.ROLE_ADMIN);
             UserCredential userCredential = userCredentialService.create(UserCredential.builder()
                     .email(email)
@@ -49,6 +50,6 @@ public class AppInit implements CommandLineRunner {
                     .userCredential(userCredential)
                     .build());
         }
-        log.warn("First Admin was created. Change email and password in application.properties");
+        log.info("First Admin was created.");
     }
 }

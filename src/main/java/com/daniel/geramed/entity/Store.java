@@ -31,9 +31,6 @@ public class Store extends BaseAuditor<String> {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "is_active")
-    private boolean isActive;
-
     @OneToOne
     @JoinColumn(name = "user_credential_id")
     private UserCredential userCredential;

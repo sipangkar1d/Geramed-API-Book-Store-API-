@@ -29,6 +29,7 @@ public class CustomUserServiceImpl implements UserDetailsService {
         return UserDetailsImpl.builder()
                 .email(userCredential.getEmail())
                 .password(userCredential.getPassword())
+                .isNonLocked(userCredential.getIsActive())
                 .authorities(grantedAuthorities)
                 .build();
     }

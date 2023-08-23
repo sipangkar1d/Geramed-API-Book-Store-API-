@@ -16,14 +16,4 @@ public interface StoreRepository extends JpaRepository<Store, String> {
 
     @Query(value = "SELECT * FROM m_store", nativeQuery = true)
     List<Store> findAllStores();
-
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE m_store SET is_active = true WHERE store_id = :id", nativeQuery = true)
-    void activateStore(@Param("id") String id);
-
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE m_store SET is_active = false WHERE store_id = :id", nativeQuery = true)
-    void deactivateStore(@Param("id") String id);
 }

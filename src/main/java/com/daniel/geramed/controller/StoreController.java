@@ -40,7 +40,6 @@ public class StoreController {
                     .phone(store.getPhone())
                     .email(store.getEmail())
                     .address(store.getAddress())
-                    .isActive(store.isActive())
                     .build();
 
             return ResponseEntity.status(HttpStatus.OK)
@@ -65,7 +64,6 @@ public class StoreController {
                         .phone(store.getPhone())
                         .email(store.getEmail())
                         .address(store.getAddress())
-                        .isActive(store.isActive())
                         .build()
         ).collect(Collectors.toList());
 
@@ -98,7 +96,6 @@ public class StoreController {
                 .phone(store.getPhone())
                 .email(store.getEmail())
                 .address(store.getAddress())
-                .isActive(store.isActive())
                 .build();
 
         return ResponseEntity.status(HttpStatus.OK)
